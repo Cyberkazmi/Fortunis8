@@ -7,6 +7,14 @@ import pytest
 from app.config import settings
 
 
+@pytest.fixture(autouse=True)
+def reset_supabase_client_after_test():
+    yield
+    from app.db import supabase_client
+
+    supabase_client.reset_supabase_client()
+
+
 def test_app_modules_import_without_live_credentials(monkeypatch):
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)

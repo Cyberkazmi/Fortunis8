@@ -6,18 +6,40 @@ from app.services.fortune_service import (
     generate_horoscope,
     generate_tarot_reading,
 )
+from app.services.user_service import ensure_profile
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Welcome to Fortunis8 ✨\n\n"
-        "Commands:\n"
-        "/start - begin your journey\n"
-        "/fortune - get a general fortune\n"
-        "/tarot - draw a tarot reading\n"
-        "/horoscope <sign> - get a horoscope\n"
-        "/profile - view your profile"
-    )
+    user = update.effective_user
+    profile = ensure_profile(user)
+
+    if profile.get("local_mode"):
+        greeting = (
+            "Welcome to Fortunis8 ✨\n\n"
+            "Your local startup profile is ready.\n"
+            "Set your Supabase credentials in .env to save user data.\n\n"
+            "Commands:\n"
+            "/start - begin your journey\n"
+            "/fortune - get a general fortune\n"
+            "/tarot - draw a tarot reading\n"
+            "/horoscope <sign> - get a horoscope\n"
+            "/profile - view your profile"
+        )
+    else:
+        greeting = (
+            f"Welcome back, {user.first_name or 'Seeker'} ✨\n\n"
+            f"Your Fortunis8 profile is ready.\n"
+            f"Diamonds: {profile.get('diamonds', 0)}\n"
+            f"Level: {profile.get('level', 1)}\n\n"
+            "Commands:\n"
+            "/start - begin your journey\n"
+            "/fortune - get a general fortune\n"
+            "/tarot - draw a tarot reading\n"
+            "/horoscope <sign> - get a horoscope\n"
+            "/profile - view your profile"
+        )
+
+    await update.message.reply_text(greeting)
 
 
 async def fortune(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -39,12 +61,15 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
+    profile = ensure_profile(user)
+
     message = (
         f"User: {user.first_name or 'Seeker'}\n"
         f"Username: @{user.username or 'unknown'}\n"
-        "Status: Mystic traveler\n"
-        "Diamonds: 0\n"
-        "Level: 1"
+        f"Persona: {profile.get('selected_persona', 'Oracle of Light')}\n"
+        f"Diamonds: {profile.get('diamonds', 0)}\n"
+        f"Level: {profile.get('level', 1)}\n"
+        f"Streak: {profile.get('streak_count', 0)}"
     )
     await update.message.reply_text(message)
 

@@ -41,6 +41,13 @@ DEFAULT_QUESTS = [
     },
 ]
 
+INTENT_MAP = {
+    "daily_fortune": ["daily fortune", "fortune", "horoscope", "reading for today", "my fortune today"],
+    "tarot_focus": ["tarot", "tarot card", "draw tarot", "my tarot"],
+    "streak_mastery": ["streak", "daily streak", "keep going", "consistency"],
+    "kindness_quest": ["kindness", "help someone", "good deed", "charity", "do good"],
+}
+
 
 def _get_local_quests_for_user(user) -> list[dict[str, Any]]:
     key = str(user.id)
@@ -54,6 +61,16 @@ def _get_local_quests_for_user(user) -> list[dict[str, Any]]:
 
 def _quest_matches(quest: dict[str, Any], quest_key: str) -> bool:
     return quest.get("key") == quest_key or quest.get("title", "").lower() == quest_key.lower()
+
+
+def detect_quest_intent(message: str) -> str | None:
+    """Map natural-language text to a Fortunis8 quest key."""
+    text = (message or "").lower()
+
+    for quest_key, phrases in INTENT_MAP.items():
+        if any(phrase in text for phrase in phrases):
+            return quest_key
+    return None
 
 
 def _sync_local_to_profile(user, profile: dict[str, Any], completed_quest: dict[str, Any]) -> dict[str, Any]:
@@ -103,6 +120,17 @@ def get_user_quests(user) -> list[dict[str, Any]]:
 
     except Exception:
         return _get_local_quests_for_user(user)
+
+
+def get_quest_summary(user) -> str:
+    quests = get_user_quests(user)
+    lines = ["Your current quests:"]
+
+    for quest in quests:
+        status = "✅ completed" if quest.get("status") == "completed" else "⏳ active"
+        lines.append(f"- {quest.get('title')} [{status}]")
+
+    return "\n".join(lines)
 
 
 def complete_quest(user, quest_key: str) -> dict[str, Any]:

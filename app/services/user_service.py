@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -13,14 +11,13 @@ from telegram.ext import (
 from app.config import settings
 from app.services.fortune_service import (
     ensure_profile,
-    generate_horoscope,
-    generate_tarot_reading,
     get_mood_options,
     get_persona_options,
     normalize_mood,
     normalize_persona,
     update_profile,
 )
+from app.services.telegram_service import generate_horoscope, generate_tarot_reading
 
 PERSONA_SELECTION = 1
 MOOD_SELECTION = 2
@@ -218,7 +215,6 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 def build_application():
-    settings.validate()
     application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
     personalization = ConversationHandler(

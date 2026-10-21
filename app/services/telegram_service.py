@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 from app.services.ai_service import generate_fortune
-from app.services.user_service import DEFAULT_MOOD, DEFAULT_PERSONA, normalize_mood, normalize_persona
+from app.services.fortune_service import (
+    DEFAULT_MOOD,
+    DEFAULT_PERSONA,
+    normalize_mood,
+    normalize_persona,
+)
 
 
 def _persona_style(persona: str) -> str:

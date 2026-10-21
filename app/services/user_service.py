@@ -215,6 +215,7 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 def build_application():
+    settings.validate()
     application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
     personalization = ConversationHandler(

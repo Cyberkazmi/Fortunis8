@@ -10,9 +10,14 @@ def get_openai_client() -> OpenAI:
     return OpenAI(api_key=settings.OPENAI_API_KEY, timeout=30.0)
 
 
-def generate_fortune(prompt: str, *, persona: str = "mystical guide") -> str:
-    client = get_openai_client()
-    response = client.chat.completions.create(
+def generate_fortune(
+    prompt: str,
+    *,
+    persona: str = "mystical guide",
+    client: OpenAI | None = None,
+) -> str:
+    api_client = client or get_openai_client()
+    response = api_client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {

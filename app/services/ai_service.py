@@ -6,11 +6,8 @@ from app.config import settings
 
 
 def get_openai_client() -> OpenAI:
-    settings.validate()
-    api_key = settings.OPENAI_API_KEY
-    if not api_key:
-        raise RuntimeError("OPENAI_API_KEY is required to generate fortune content.")
-    return OpenAI(api_key=api_key, timeout=30.0)
+    settings.validate_ai()
+    return OpenAI(api_key=settings.OPENAI_API_KEY, timeout=30.0)
 
 
 def generate_fortune(prompt: str, *, persona: str = "mystical guide") -> str:

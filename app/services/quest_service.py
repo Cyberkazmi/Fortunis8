@@ -4,9 +4,9 @@ from datetime import datetime
 from typing import Any
 
 from app.config import settings
-from app.db.supabase_client import supabase
+from app.db.supabase_client import get_supabase_client
 from app.services.rewards_service import award_diamonds_and_level
-from app.services.user_service import ensure_profile, update_profile
+from app.services.fortune_service import ensure_profile, update_profile
 
 LOCAL_QUESTS: dict[str, list[dict[str, Any]]] = {}
 
@@ -93,6 +93,7 @@ def get_user_quests(user) -> list[dict[str, Any]]:
         return _get_local_quests_for_user(user)
 
     try:
+        supabase = get_supabase_client()
         response = (
             supabase.table("quests")
             .select("*")
@@ -154,6 +155,7 @@ def complete_quest(user, quest_key: str) -> dict[str, Any]:
 
         if settings.SUPABASE_URL and settings.SUPABASE_KEY:
             try:
+                supabase = get_supabase_client()
                 supabase.table("quests").update({
                     "status": "completed",
                     "completed_at": quest["completed_at"],

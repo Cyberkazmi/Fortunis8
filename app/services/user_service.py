@@ -19,9 +19,22 @@ from app.services.fortune_service import (
 )
 from app.services.quest_service import get_quest_summary
 from app.services.telegram_service import generate_horoscope, generate_tarot_reading
+from app.utils.logging import get_logger
 
 PERSONA_SELECTION = 1
 MOOD_SELECTION = 2
+logger = get_logger(__name__)
+
+
+def _safe_reading(generator, *args, **kwargs) -> str:
+    try:
+        return generator(*args, **kwargs)
+    except Exception:
+        logger.exception("Fortune reading generation failed")
+        return (
+            "I’m having trouble reaching the reading service right now. "
+            "Please try again in a moment."
+        )
 
 
 def _default_reply(user) -> str:
@@ -105,7 +118,8 @@ async def handle_mood_choice(update: Update, context: ContextTypes.DEFAULT_TYPE)
     )
 
     persona = updated.get("selected_persona") or profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(
+    reading = _safe_reading(
+        generate_horoscope,
         profile.get("zodiac_sign") or "aries",
         user_name=(user.first_name or "Seeker"),
         mood=mood,
@@ -128,7 +142,13 @@ async def fortune(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sign = profile.get("zodiac_sign") or "aries"
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(sign, user_name=(user.first_name or "Seeker"), mood=mood, persona=persona)
+    reading = _safe_reading(
+        generate_horoscope,
+        sign,
+        user_name=(user.first_name or "Seeker"),
+        mood=mood,
+        persona=persona,
+    )
     await update.message.reply_text(reading)
 
 
@@ -138,7 +158,8 @@ async def tarot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     question = "What should I focus on today?"
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_tarot_reading(
+    reading = _safe_reading(
+        generate_tarot_reading,
         question,
         user_name=(user.first_name or "Seeker"),
         mood=mood,
@@ -153,7 +174,13 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sign = context.args[0].lower() if context.args else (profile.get("zodiac_sign") or "aries")
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(sign, user_name=(user.first_name or "Seeker"), mood=mood, persona=persona)
+    reading = _safe_reading(
+        generate_horoscope,
+        sign,
+        user_name=(user.first_name or "Seeker"),
+        mood=mood,
+        persona=persona,
+    )
     await update.message.reply_text(reading)
 
 

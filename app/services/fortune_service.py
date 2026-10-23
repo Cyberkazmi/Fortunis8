@@ -2,6 +2,9 @@ from __future__ import annotations
 
 from app.config import settings
 from app.db.supabase_client import get_supabase_client
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 PERSONAS = {
     "Oracle of Light": ["oracle of light", "oracle", "light"],
@@ -103,6 +106,7 @@ def ensure_profile(user) -> dict:
             return profile
         return payload
     except Exception:
+        logger.exception("Profile lookup or creation failed; using local fallback")
         return {
             "telegram_id": telegram_id,
             "username": user.username,
@@ -135,6 +139,7 @@ def update_profile(user, **fields):
         if result.data:
             return result.data[0]
     except Exception:
+        logger.exception("Profile update failed; using local fallback")
         return {"telegram_id": telegram_id, "local_mode": True, **fields}
 
     return {"telegram_id": telegram_id, **fields}

@@ -18,6 +18,7 @@ from app.services.fortune_service import (
     update_profile,
 )
 from app.services.quest_service import get_quest_summary
+from app.services.streak_service import apply_daily_reward
 from app.services.telegram_service import generate_horoscope, generate_tarot_reading
 from app.utils.logging import get_logger
 
@@ -45,6 +46,7 @@ def _default_reply(user) -> str:
         "- I feel overwhelmed\n"
         "- draw tarot\n"
         "- show my profile\n"
+        "- claim my daily reward\n"
         "- I want to become a Moon Reader"
     )
 
@@ -64,7 +66,8 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         "/fortune - get a horoscope\n"
         "/tarot - draw a tarot reading\n"
         "/profile - view your profile\n"
-        "/quests - see your current quests"
+        "/quests - see your current quests\n"
+        "/daily - claim your daily reward"
     )
     await update.message.reply_text(greeting)
 
@@ -204,6 +207,32 @@ async def quests(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(get_quest_summary(update.effective_user))
 
 
+async def daily_reward(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user = update.effective_user
+    profile = ensure_profile(user)
+
+    # Local mode has no database row to reload, so carry the updated profile
+    # in Telegram's per-user context between daily claims.
+    if profile.get("local_mode") and context.user_data.get("daily_profile"):
+        profile = {**profile, **context.user_data["daily_profile"]}
+
+    result = apply_daily_reward(profile, context.user_data)
+    context.user_data["last_daily_date"] = result["new_last_daily_date"]
+    updated_profile = result["profile"]
+    context.user_data["daily_profile"] = updated_profile
+
+    if result["reward_earned"]:
+        persisted = update_profile(
+            user,
+            diamonds=updated_profile["diamonds"],
+            streak_count=updated_profile["streak_count"],
+            level=updated_profile["level"],
+        )
+        context.user_data["daily_profile"] = {**updated_profile, **persisted}
+
+    await update.message.reply_text(result["message"])
+
+
 async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = (update.message.text or "").strip()
     if not text:
@@ -219,6 +248,10 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     if "quest" in lower_text:
         await quests(update, context)
+        return
+
+    if "daily reward" in lower_text or "claim my reward" in lower_text:
+        await daily_reward(update, context)
         return
 
     if "fortune" in lower_text or "horoscope" in lower_text or "reading for today" in lower_text:
@@ -270,5 +303,7 @@ def build_application():
     application.add_handler(CommandHandler("horoscope", horoscope))
     application.add_handler(CommandHandler("profile", profile))
     application.add_handler(CommandHandler("quests", quests))
+    application.add_handler(CommandHandler("daily", daily_reward))
+    application.add_handler(CommandHandler("reward", daily_reward))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_free_text))
     return application

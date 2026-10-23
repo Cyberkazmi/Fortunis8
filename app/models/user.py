@@ -9,6 +9,7 @@ class UserProfile:
     first_name: Optional[str] = None
     zodiac_sign: Optional[str] = None
     selected_persona: Optional[str] = None
+    current_mood: Optional[str] = None
     diamonds: int = 0
     streak_count: int = 0
     level: int = 1

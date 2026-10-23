@@ -1,3 +1,3 @@
-from app.services.telegram_service import build_application
+from app.services.user_service import build_application
 
 __all__ = ["build_application"]

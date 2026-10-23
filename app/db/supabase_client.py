@@ -1,15 +1,26 @@
+from __future__ import annotations
+
+from typing import Any
+
 from supabase import create_client
 
 from app.config import settings
 
+_SUPABASE_CLIENT: Any | None = None
 
-def build_supabase_client():
-    if not settings.SUPABASE_URL or not settings.SUPABASE_KEY:
-        raise RuntimeError(
-            "Supabase credentials are missing. Set SUPABASE_URL and SUPABASE_KEY before starting Fortunis8."
-        )
 
+def build_supabase_client() -> Any:
+    settings.validate_supabase()
     return create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
 
 
-supabase = build_supabase_client()
+def get_supabase_client() -> Any:
+    global _SUPABASE_CLIENT
+    if _SUPABASE_CLIENT is None:
+        _SUPABASE_CLIENT = build_supabase_client()
+    return _SUPABASE_CLIENT
+
+
+def reset_supabase_client() -> None:
+    global _SUPABASE_CLIENT
+    _SUPABASE_CLIENT = None

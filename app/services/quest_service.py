@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any
 
 from app.config import settings
-from app.db.supabase_client import supabase
+from app.db.supabase_client import get_supabase_client
 from app.services.rewards_service import award_diamonds_and_level
-from app.services.user_service import ensure_profile, update_profile
+from app.services.fortune_service import ensure_profile, update_profile
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 LOCAL_QUESTS: dict[str, list[dict[str, Any]]] = {}
 
@@ -93,6 +96,7 @@ def get_user_quests(user) -> list[dict[str, Any]]:
         return _get_local_quests_for_user(user)
 
     try:
+        supabase = get_supabase_client()
         response = (
             supabase.table("quests")
             .select("*")
@@ -110,7 +114,7 @@ def get_user_quests(user) -> list[dict[str, Any]]:
                 "description": quest["description"],
                 "reward_diamonds": quest["reward_diamonds"],
                 "status": quest["status"],
-                "created_at": datetime.utcnow().isoformat(),
+                "created_at": datetime.now(timezone.utc).isoformat(),
                 "completed_at": None,
             }
             for quest in DEFAULT_QUESTS
@@ -119,6 +123,7 @@ def get_user_quests(user) -> list[dict[str, Any]]:
         return inserted.data or rows
 
     except Exception:
+        logger.exception("Quest lookup or creation failed; using local fallback")
         return _get_local_quests_for_user(user)
 
 
@@ -150,15 +155,17 @@ def complete_quest(user, quest_key: str) -> dict[str, Any]:
             }
 
         quest["status"] = "completed"
-        quest["completed_at"] = datetime.utcnow().isoformat()
+        quest["completed_at"] = datetime.now(timezone.utc).isoformat()
 
         if settings.SUPABASE_URL and settings.SUPABASE_KEY:
             try:
+                supabase = get_supabase_client()
                 supabase.table("quests").update({
                     "status": "completed",
                     "completed_at": quest["completed_at"],
                 }).eq("user_id", profile["id"]).eq("title", quest["title"]).execute()
             except Exception:
+                logger.exception("Quest completion persistence failed")
                 pass
 
         updated_profile = _sync_local_to_profile(user, profile, quest)

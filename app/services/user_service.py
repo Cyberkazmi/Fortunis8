@@ -9,8 +9,7 @@ from telegram.ext import (
 )
 
 from app.config import settings
-from app.services.fortune_service import generate_horoscope, generate_tarot_reading
-from app.services.user_service import (
+from app.services.fortune_service import (
     ensure_profile,
     get_mood_options,
     get_persona_options,
@@ -18,9 +17,24 @@ from app.services.user_service import (
     normalize_persona,
     update_profile,
 )
+from app.services.quest_service import get_quest_summary
+from app.services.telegram_service import generate_horoscope, generate_tarot_reading
+from app.utils.logging import get_logger
 
 PERSONA_SELECTION = 1
 MOOD_SELECTION = 2
+logger = get_logger(__name__)
+
+
+def _safe_reading(generator, *args, **kwargs) -> str:
+    try:
+        return generator(*args, **kwargs)
+    except Exception:
+        logger.exception("Fortune reading generation failed")
+        return (
+            "I’m having trouble reaching the reading service right now. "
+            "Please try again in a moment."
+        )
 
 
 def _default_reply(user) -> str:
@@ -104,7 +118,8 @@ async def handle_mood_choice(update: Update, context: ContextTypes.DEFAULT_TYPE)
     )
 
     persona = updated.get("selected_persona") or profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(
+    reading = _safe_reading(
+        generate_horoscope,
         profile.get("zodiac_sign") or "aries",
         user_name=(user.first_name or "Seeker"),
         mood=mood,
@@ -127,7 +142,13 @@ async def fortune(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sign = profile.get("zodiac_sign") or "aries"
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(sign, user_name=(user.first_name or "Seeker"), mood=mood, persona=persona)
+    reading = _safe_reading(
+        generate_horoscope,
+        sign,
+        user_name=(user.first_name or "Seeker"),
+        mood=mood,
+        persona=persona,
+    )
     await update.message.reply_text(reading)
 
 
@@ -137,7 +158,8 @@ async def tarot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     question = "What should I focus on today?"
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_tarot_reading(
+    reading = _safe_reading(
+        generate_tarot_reading,
         question,
         user_name=(user.first_name or "Seeker"),
         mood=mood,
@@ -152,7 +174,13 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     sign = context.args[0].lower() if context.args else (profile.get("zodiac_sign") or "aries")
     mood = profile.get("current_mood") or "balanced"
     persona = profile.get("selected_persona") or "Oracle of Light"
-    reading = generate_horoscope(sign, user_name=(user.first_name or "Seeker"), mood=mood, persona=persona)
+    reading = _safe_reading(
+        generate_horoscope,
+        sign,
+        user_name=(user.first_name or "Seeker"),
+        mood=mood,
+        persona=persona,
+    )
     await update.message.reply_text(reading)
 
 
@@ -172,6 +200,10 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(message)
 
 
+async def quests(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(get_quest_summary(update.effective_user))
+
+
 async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     text = (update.message.text or "").strip()
     if not text:
@@ -183,6 +215,10 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     if "profile" in lower_text or "status" in lower_text or "how am i doing" in lower_text:
         await profile(update, context)
+        return
+
+    if "quest" in lower_text:
+        await quests(update, context)
         return
 
     if "fortune" in lower_text or "horoscope" in lower_text or "reading for today" in lower_text:
@@ -215,6 +251,7 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 
 def build_application():
+    settings.validate()
     application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
     personalization = ConversationHandler(
@@ -232,5 +269,6 @@ def build_application():
     application.add_handler(CommandHandler("tarot", tarot))
     application.add_handler(CommandHandler("horoscope", horoscope))
     application.add_handler(CommandHandler("profile", profile))
+    application.add_handler(CommandHandler("quests", quests))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_free_text))
     return application

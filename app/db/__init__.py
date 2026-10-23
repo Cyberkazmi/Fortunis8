@@ -1,3 +1,3 @@
-from app.db.supabase_client import supabase
+from app.db.supabase_client import get_supabase_client, reset_supabase_client
 
-__all__ = ["supabase"]
+__all__ = ["get_supabase_client", "reset_supabase_client"]

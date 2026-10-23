@@ -2,8 +2,14 @@ name: Python CI
 
 on:
   push:
-    branches: ["main"]
+    branches:
+      - main
+      - prod-readiness-audit
   pull_request:
+    branches:
+      - main
+      - prod-readiness-audit
+  workflow_dispatch:
 
 jobs:
   test:

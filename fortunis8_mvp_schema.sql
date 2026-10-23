@@ -15,6 +15,7 @@ CREATE TABLE profiles (
   last_name TEXT,
   zodiac_sign TEXT,
   selected_persona TEXT NOT NULL DEFAULT 'Oracle of Light',
+  current_mood TEXT NOT NULL DEFAULT 'balanced',
   diamonds INTEGER NOT NULL DEFAULT 0 CHECK (diamonds >= 0),
   streak_count INTEGER NOT NULL DEFAULT 0 CHECK (streak_count >= 0),
   level INTEGER NOT NULL DEFAULT 1 CHECK (level >= 1),

@@ -1,5 +1,10 @@
-from app.db.supabase_client import supabase
+from __future__ import annotations
+
 from app.config import settings
+from app.db.supabase_client import get_supabase_client
+from app.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 PERSONAS = {
     "Oracle of Light": ["oracle of light", "oracle", "light"],
@@ -44,6 +49,14 @@ def normalize_mood(value) -> str:
     return DEFAULT_MOOD
 
 
+def get_persona_options() -> list[str]:
+    return list(PERSONAS.keys())
+
+
+def get_mood_options() -> list[str]:
+    return list(MOOD_ALIASES.keys())
+
+
 def ensure_profile(user) -> dict:
     """Create or fetch the Telegram user's Fortunis8 profile."""
     telegram_id = str(user.id)
@@ -64,14 +77,9 @@ def ensure_profile(user) -> dict:
         }
 
     try:
-        existing = (
-            supabase.table("profiles")
-            .select("*")
-            .eq("telegram_id", telegram_id)
-            .limit(1)
-            .execute()
-        )
-
+        client = get_supabase_client()
+        table = client.table("profiles")
+        existing = table.select("*").eq("telegram_id", telegram_id).limit(1).execute()
         if existing.data:
             profile = existing.data[0]
             profile["selected_persona"] = normalize_persona(profile.get("selected_persona"))
@@ -90,17 +98,15 @@ def ensure_profile(user) -> dict:
             "streak_count": 0,
             "level": 1,
         }
-
-        result = supabase.table("profiles").insert(payload).execute()
+        result = table.insert(payload).execute()
         if result.data:
             profile = result.data[0]
             profile["selected_persona"] = normalize_persona(profile.get("selected_persona"))
             profile["current_mood"] = normalize_mood(profile.get("current_mood"))
             return profile
-
         return payload
-
     except Exception:
+        logger.exception("Profile lookup or creation failed; using local fallback")
         return {
             "telegram_id": telegram_id,
             "username": user.username,
@@ -129,23 +135,11 @@ def update_profile(user, **fields):
         return {"telegram_id": telegram_id, "local_mode": True, **fields}
 
     try:
-        result = (
-            supabase.table("profiles")
-            .update(fields)
-            .eq("telegram_id", telegram_id)
-            .execute()
-        )
+        result = get_supabase_client().table("profiles").update(fields).eq("telegram_id", telegram_id).execute()
         if result.data:
             return result.data[0]
     except Exception:
+        logger.exception("Profile update failed; using local fallback")
         return {"telegram_id": telegram_id, "local_mode": True, **fields}
 
     return {"telegram_id": telegram_id, **fields}
-
-
-def get_persona_options() -> list[str]:
-    return list(PERSONAS.keys())
-
-
-def get_mood_options() -> list[str]:
-    return list(MOOD_ALIASES.keys())

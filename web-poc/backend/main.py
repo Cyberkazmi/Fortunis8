@@ -19,6 +19,7 @@ index_file = frontend_dir / "index.html"
 
 
 @app.get("/dashboard", include_in_schema=False)
+@app.get("/onboarding", include_in_schema=False)
 @app.get("/technical-poc", include_in_schema=False)
 def preview_page() -> FileResponse:
     return FileResponse(index_file)

@@ -185,3 +185,10 @@ body { background: #0b78b8; }
 .energy-ring { background: conic-gradient(var(--ring) 0 var(--value), #193b54 var(--value) 100%); }
 @media (max-width: 900px) { .pricing-section { width: min(100% - 42px, 660px); } }
 @media (max-width: 560px) { .pricing-section { width: calc(100% - 36px); } .float-level { right: -8px; top: 8px; } .float-streak { left: -8px; bottom: -2px; } }
+
+/* Screenshot audit fixes: clearer sky-blue contrast and safe sidebar spacing. */
+.urdu-hero { color: #fff4c7; text-shadow: 0 1px 12px #06345c66; }
+.onboarding-step > p:not(.eyebrow), .selection-card small, .mode-choice small, .boundary-card p { color: #dff7ff; }
+.app-sidebar { padding-bottom: 128px; }
+.app-sidebar > a > span, .sidebar-label, .dashboard-diamond, .dashboard-diamond strong, .path-strip .card-label, .section-title .eyebrow, .quest-status { color: #fff0b0; }
+.primary-button:disabled { cursor: not-allowed; opacity: .48; filter: saturate(.5); }

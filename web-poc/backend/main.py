@@ -15,9 +15,9 @@ def health() -> dict[str, str]:
 
 
 @app.get("/api/entitlement")
-def entitlement(user_id: str = "demo_free", plan: str | None = None) -> dict:
-    """Return prototype entitlement data; no payment or database lookup occurs."""
-    return get_entitlement(user_id, requested_plan=plan)
+def entitlement(user_id: str = "demo_free") -> dict:
+    """Return repository-derived entitlement data; no payment or network lookup occurs."""
+    return get_entitlement(user_id)
 
 
 # Preview uses one process so the frontend can demonstrate a real relative /health call.

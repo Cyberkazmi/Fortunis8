@@ -161,3 +161,27 @@ body { background: #0b78b8; }
 .reading-note { display: flex; gap: 18px; margin-top: 70px; padding: 25px; border: 1px solid #87cfe555; border-radius: 20px; background: #0d2b46aa; }.reading-note > span { color: #ffe08a; font-size: 1.5rem; }.reading-note h2 { margin: 10px 0; font: 500 1.6rem Georgia, serif; }.reading-note p:last-child { margin: 0; color: #a8cfe0; font-size: .77rem; }.reading-tabs { display: none; }
 @media (max-width: 700px) { .pricing-grid { grid-template-columns: 1fr; }.plan-card ul { min-height: auto; }.premium-upsell { display: block; }.premium-upsell .primary-button { margin-top: 20px; }.reading-top { padding: 19px 0; }.reading-status { display: none; }.reading-shell { padding: 48px 0 100px; }.constellation-card { min-height: 560px; padding: 23px; }.tarot-card { right: 10%; top: 16%; width: 155px; min-height: 220px; }.reading-caption { left: 23px; right: 23px; bottom: 23px; }.reading-caption h2 { font-size: 1.8rem; }.energy-grid { gap: 8px; }.energy-ring { padding: 6px; }.energy-ring strong { font-size: 1.05rem; }.reading-note { margin-top: 50px; }.reading-tabs { position: fixed; z-index: 20; left: 12px; right: 12px; bottom: 12px; display: flex; justify-content: space-around; padding: 11px 7px 9px; border: 1px solid #87cfe566; border-radius: 17px; background: #061a2beF; backdrop-filter: blur(15px); box-shadow: 0 16px 35px #0008; }.reading-tabs a { display: grid; justify-items: center; gap: 4px; color: #a9d3e0; font-size: 1rem; }.reading-tabs a span { font-size: .55rem; }.reading-tabs a.active { color: #ffe08a; } }
 @media (prefers-reduced-motion: reduce) { .hero-copy, .growth-hero::before { animation: none !important; } }
+
+/* Hark audit refinements: centered hero, readable sky-blue surfaces, and user-owned check-ins. */
+.growth-hero { grid-template-columns: 1fr; gap: 18px; justify-items: center; text-align: center; }
+.hero-copy { display: grid; justify-items: center; width: 100%; }
+.hero-copy h1 { max-width: 860px; }
+.hero-lede { margin-left: auto; margin-right: auto; }
+.hero-actions { justify-content: center; }
+.hero-note { text-align: center; }
+.hero-product { width: min(620px, 100%); min-height: 470px; }
+.float-level { top: 20px; right: -32px; }
+.float-streak { bottom: 2px; left: -34px; }
+.pricing-section { width: min(1220px, calc(100% - 80px)); margin: auto; }
+.plan-card:not(.premium) .text-link { color: #075b8e; font-weight: 800; }
+.trust-row, .dashboard-head > div > p:last-child, .path-strip p:last-child, .section-title > a, .small-action { color: #d9f5ff; }
+.onboarding-page { background: linear-gradient(145deg, #075992, #0b8bc7 58%, #0b5a96); }
+.onboarding-progress > div { background: #07568e; }
+.boundary-card, .selection-card, .mode-choice, .soft-note, .review-card { border-color: #8bdcf655; background: #0a66a0bb; }
+.selection-card:hover, .selection-card.selected, .mode-choice:hover, .mode-choice.selected { border-color: #ffe08a; background: #0b78b8; }
+.state-chip, .choice-line button { border-color: #b8eaff88; color: #e8faff; background: #075d99; }
+.soft-note { color: #d5f2fa; }
+.constellation-card::before { opacity: .12; }
+.energy-ring { background: conic-gradient(var(--ring) 0 var(--value), #193b54 var(--value) 100%); }
+@media (max-width: 900px) { .pricing-section { width: min(100% - 42px, 660px); } }
+@media (max-width: 560px) { .pricing-section { width: calc(100% - 36px); } .float-level { right: -8px; top: 8px; } .float-streak { left: -8px; bottom: -2px; } }

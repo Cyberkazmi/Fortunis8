@@ -60,3 +60,20 @@ Create a `.env` file using `.env.example`. The production bot requires `TELEGRAM
 ## Notes
 
 The migrations in `supabase/migrations/` are committed source artifacts only. They must be reviewed and run by the database owner; this local POC does not execute them.
+
+
+## Authenticated web MVP boundary
+
+The web MVP now uses Supabase browser auth when `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are configured. `/login` and `/signup` use the official browser client, restore sessions, and do not provide fake demo success when credentials are absent. Protected routes are `/onboarding`, `/dashboard`, and `/reading/tarot`.
+
+The FastAPI routes use a verified bearer token and derive ownership from the token subject; they do not accept browser-supplied user IDs:
+
+- `GET /api/profile/me`
+- `PUT /api/profile/me`
+- `GET /api/ritual/today`
+- `POST /api/ritual-completions`
+- `GET /api/entitlement/me`
+
+The default local mode uses in-memory repositories for safe tests. Set `WEB_POC_PROFILE_REPOSITORY=supabase` only in a server environment with `SUPABASE_URL` and the server-only `SUPABASE_SERVICE_ROLE_KEY`. Never expose the service-role key to Vite/browser variables. The JWT verifier requires `SUPABASE_JWT_SECRET` and validates signature, issuer when configured, audience, expiry, issued-at, and subject.
+
+`supabase/migrations/20261102000000_phase2b_auth_mvp.sql` is an unapplied source artifact. It makes Telegram identity optional for web-only profiles and adds owner RLS policies. It has been syntax-validated only against a disposable local PostgreSQL database; no live Supabase migration has been run.

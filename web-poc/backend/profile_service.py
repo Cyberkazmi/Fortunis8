@@ -33,6 +33,10 @@ class UserProfile:
     optional_readings: bool = False
     delivery_time: str | None = None
     timezone: str | None = None
+    current_state: str | None = None
+    preferred_delivery_window: str = "morning"
+    notification_frequency: str = "daily"
+    notifications_enabled: bool = True
 
 
 class ProfileRepository:

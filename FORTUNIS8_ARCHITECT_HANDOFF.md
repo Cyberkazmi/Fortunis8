@@ -428,3 +428,22 @@ The next implementation checkpoint should be a focused **authenticated profile M
 7. Preserve the current 39-test baseline and add endpoint tests for authenticated ownership and cross-user access denial.
 
 This is the smallest next step that converts the current connected POC into a secure, persistent MVP foundation without prematurely implementing payments, native mobile, or the complete notification platform.
+
+
+## 10. Phase 2B authenticated MVP addendum
+
+The repository has now advanced from Phase 2A into the authenticated MVP foundation. The active branch remains `manus-sync`; no changes were made to `main` or `prod-readiness-audit`.
+
+Completed in this increment:
+
+- Added strict bearer-token verification in `web-poc/backend/auth.py`. The server validates JWT signature, required claims, audience, optional issuer, expiry, issued-at, and subject. Missing credentials return 401; missing server auth configuration is explicit rather than silently accepting a user ID.
+- Replaced browser-supplied ownership parameters with authenticated routes: `GET/PUT /api/profile/me`, `GET /api/ritual/today`, `POST /api/ritual-completions`, and `GET /api/entitlement/me`.
+- Added typed Pydantic transport contracts and OpenAPI bearer security metadata.
+- Added `SupabaseProfileRepository` as a server-side adapter using the verified auth subject and a service-role client only on the backend. The default test mode remains in memory.
+- Added server-authoritative, idempotent ritual completion responses with XP/diamond awards in the local repository boundary.
+- Added browser Supabase session restoration, sign-up, sign-in, sign-out, protected routes, authenticated API headers, and explicit unavailable/error states. No fake demo authentication is exposed.
+- Added the unapplied `supabase/migrations/20261102000000_phase2b_auth_mvp.sql`. It makes `telegram_id` nullable for web-only accounts and adds owner RLS policies. It was validated only against a disposable local PostgreSQL database; no live Supabase SQL was executed.
+
+Validation evidence for this increment: 46 pytest tests pass, the Vite build passes, the route manifest includes `/login` and `/signup`, the static security checks pass, and the complete migration chain applies to the disposable local PostgreSQL database when Supabase-like roles/functions are stubbed locally.
+
+Remaining production gates: Hark/database owner review and application of the migrations, Supabase browser/server environment configuration, enabling `WEB_POC_PROFILE_REPOSITORY=supabase`, replacing in-memory completion/progression with durable transactional ledgers, notification scheduling, payment webhooks, and production deployment approval.

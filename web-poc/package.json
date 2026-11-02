@@ -8,10 +8,10 @@
     "check": "vite build"
   },
   "dependencies": {
+    "@supabase/supabase-js": "2.48.1",
     "@vitejs/plugin-react": "latest",
-    "vite": "latest",
     "react": "latest",
-    "react-dom": "latest"
-  },
-  "devDependencies": {}
+    "react-dom": "latest",
+    "vite": "latest"
+  }
 }

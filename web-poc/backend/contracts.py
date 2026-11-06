@@ -61,6 +61,10 @@ class RitualResponse(BaseModel):
     action_step: str
     fallback_used: bool
     date: str
+    source: str = "catalog-fallback"
+    ritual_steps: list[str] = Field(default_factory=list)
+    tarot_reflection: dict[str, str] | None = None
+    safety_note: str | None = None
 
 
 class ProfileResponse(BaseModel):

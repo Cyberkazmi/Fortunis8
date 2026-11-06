@@ -10,6 +10,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from backend.auth import AuthenticatedUser, get_current_user
+from backend.ai_ritual_service import generate_experience
 from backend.contracts import (
     EntitlementResponse,
     ProfileEnvelope,
@@ -26,7 +27,6 @@ from backend.profile_repository import SupabaseProfileRepository
 from backend.profile_service import (
     ProfileRepository,
     UserProfile,
-    choose_ritual,
 )
 
 
@@ -126,7 +126,7 @@ def save_my_profile(
             notifications_enabled=payload.notifications_enabled,
         )
     )
-    ritual = choose_ritual(profile, current_user.user_id)
+    ritual = generate_experience(profile, current_user.user_id)
     return ProfileWithRitualEnvelope(
         profile=ProfileResponse(**profile_to_dict(profile)),
         ritual=RitualResponse(**ritual),
@@ -140,7 +140,7 @@ def ritual_today(
     profile = _profile_or_404(current_user.user_id)
     return ProfileWithRitualEnvelope(
         profile=ProfileResponse(**profile_to_dict(profile)),
-        ritual=RitualResponse(**choose_ritual(profile, current_user.user_id)),
+        ritual=RitualResponse(**generate_experience(profile, current_user.user_id)),
     )
 
 
@@ -150,7 +150,7 @@ def complete_ritual(
     current_user: AuthenticatedUser = Depends(get_current_user),
 ) -> RitualCompletionResponse:
     profile = _profile_or_404(current_user.user_id)
-    ritual = choose_ritual(profile, current_user.user_id)
+    ritual = generate_experience(profile, current_user.user_id)
     if payload.stable_key != ritual["stable_key"]:
         raise HTTPException(status_code=403, detail="This ritual is not assigned to the authenticated user today.")
     completed_for = datetime.now(timezone.utc).date()

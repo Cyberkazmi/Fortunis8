@@ -28,6 +28,19 @@ class UnconfiguredTokenVerifier:
         )
 
 
+class PreviewTokenVerifier:
+    """Sandbox-only identity; enabled only by WEB_POC_PREVIEW_AUTH=true."""
+
+    def verify(self, token: str) -> AuthenticatedUser:
+        if token != "preview-token":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid preview token.",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        return AuthenticatedUser(user_id="preview-user", email="preview@fortunis8.local")
+
+
 class SupabaseJWTVerifier:
     """Verify Supabase access tokens; never trust an unsigned decoded payload."""
 
@@ -77,6 +90,8 @@ class SupabaseJWTVerifier:
 
 
 def build_token_verifier() -> TokenVerifier:
+    if os.getenv("WEB_POC_PREVIEW_AUTH", "false").lower() == "true":
+        return PreviewTokenVerifier()
     secret = os.getenv("SUPABASE_JWT_SECRET")
     if not secret:
         return UnconfiguredTokenVerifier()

@@ -1,0 +1,734 @@
+{
+ "goals": [
+  [
+   "business_wealth",
+   "Business & wealth mindset",
+   "کاروبار اور مالی سوچ",
+   "Clear financial priorities and consistent business actions."
+  ],
+  [
+   "study_exams",
+   "Study & exam preparation",
+   "پڑھائی اور امتحان کی تیاری",
+   "Focused study blocks and steady revision."
+  ],
+  [
+   "career_interview",
+   "Job & interview confidence",
+   "نوکری اور انٹرویو کا اعتماد",
+   "Prepared, confident career moves."
+  ],
+  [
+   "health_energy",
+   "Health & energy habits",
+   "صحت اور توانائی کی عادات",
+   "Small daily habits for movement, water and rest."
+  ],
+  [
+   "stress_calm",
+   "Stress reduction & calm",
+   "ذہنی دباؤ میں کمی اور سکون",
+   "Short regulation practices for calmer days."
+  ],
+  [
+   "relationships",
+   "Relationships",
+   "رشتے",
+   "Kinder, clearer connection with people who matter."
+  ],
+  [
+   "creativity",
+   "Creativity",
+   "تخلیقی صلاحیت",
+   "Regular making, idea capture and play."
+  ],
+  [
+   "discipline",
+   "Discipline",
+   "نظم و ضبط",
+   "Keeping small promises to yourself."
+  ],
+  [
+   "spiritual_reflection",
+   "Spiritual reflection",
+   "روحانی غور و فکر",
+   "Meaning, gratitude and inner reflection."
+  ],
+  [
+   "religious_routine",
+   "Religious routine",
+   "مذہبی معمول",
+   "Support for the routine of your own faith, as you define it."
+  ],
+  [
+   "confidence",
+   "Confidence",
+   "خود اعتمادی",
+   "Evidence-based self-belief through small wins."
+  ],
+  [
+   "life_transition",
+   "Life transition",
+   "زندگی کی تبدیلی",
+   "Steadiness through moves, endings and new starts."
+  ],
+  [
+   "sleep_recovery",
+   "Sleep & recovery",
+   "نیند اور آرام",
+   "Wind-down routines that support rest."
+  ]
+ ],
+ "modes": [
+  [
+   "scientific",
+   "Scientific",
+   "سائنسی",
+   "Evidence-informed habit and attention practices.",
+   false
+  ],
+  [
+   "mindfulness",
+   "Mindfulness",
+   "مائنڈفلنس",
+   "Breath, attention and present-moment awareness.",
+   false
+  ],
+  [
+   "practical",
+   "Practical action",
+   "عملی قدم",
+   "Plans, checklists and one concrete step.",
+   false
+  ],
+  [
+   "motivational",
+   "Motivational",
+   "حوصلہ افزا",
+   "Encouraging prompts and progress reminders.",
+   false
+  ],
+  [
+   "visualization",
+   "Visualization",
+   "تصور",
+   "Imagining the next step clearly before taking it.",
+   false
+  ],
+  [
+   "spiritual_reflection",
+   "Spiritual reflection",
+   "روحانی غور",
+   "Meaning, gratitude and reflection, without a specific doctrine.",
+   true
+  ],
+  [
+   "religious_practice",
+   "Religious practice",
+   "مذہبی عمل",
+   "Reminders shaped around the user's own stated faith.",
+   true
+  ],
+  [
+   "mixed",
+   "Mixed",
+   "ملا جلا",
+   "A blend of the modes the user selected.",
+   false
+  ]
+ ],
+ "states": [
+  [
+   "stressed",
+   "Stressed",
+   "دباؤ میں"
+  ],
+  [
+   "low_energy",
+   "Low energy",
+   "کم توانائی"
+  ],
+  [
+   "distracted",
+   "Distracted",
+   "بکھری توجہ"
+  ],
+  [
+   "motivated",
+   "Motivated",
+   "پرجوش"
+  ],
+  [
+   "uncertain",
+   "Uncertain",
+   "غیر یقینی"
+  ],
+  [
+   "calm",
+   "Calm",
+   "پرسکون"
+  ]
+ ],
+ "traditions": [
+  [
+   "none",
+   "No tradition",
+   "کوئی نہیں"
+  ],
+  [
+   "islam",
+   "Islam",
+   "اسلام"
+  ],
+  [
+   "christianity",
+   "Christianity",
+   "مسیحیت"
+  ],
+  [
+   "hinduism",
+   "Hinduism",
+   "ہندومت"
+  ],
+  [
+   "sikhism",
+   "Sikhism",
+   "سکھ مت"
+  ],
+  [
+   "buddhism",
+   "Buddhism",
+   "بدھ مت"
+  ],
+  [
+   "other",
+   "Other / personal",
+   "دیگر / ذاتی"
+  ]
+ ],
+ "rituals": [
+  {
+   "key": "box_breath_4",
+   "type": "breath",
+   "mode": "mindfulness",
+   "seconds": 120,
+   "goals": [
+    "stress_calm",
+    "study_exams",
+    "career_interview"
+   ],
+   "states": [
+    "stressed",
+    "distracted"
+   ],
+   "en_title": "Box breathing, 2 minutes",
+   "en_instructions": "Breathe in for 4, hold 4, out 4, hold 4. Repeat 6 rounds. Then name one thing you will do next.",
+   "ur_title": "باکس بریدنگ، 2 منٹ",
+   "ur_instructions": "4 گنتی سانس اندر، 4 روکیں، 4 باہر، 4 روکیں۔ 6 بار دہرائیں۔ پھر اگلا ایک کام طے کریں۔",
+   "safety_note": "Stop if you feel dizzy and breathe normally."
+  },
+  {
+   "key": "long_exhale",
+   "type": "breath",
+   "mode": "scientific",
+   "seconds": 90,
+   "goals": [
+    "stress_calm",
+    "sleep_recovery"
+   ],
+   "states": [
+    "stressed"
+   ],
+   "en_title": "Longer exhale",
+   "en_instructions": "Inhale through the nose for 4, exhale slowly for 6 to 8. Ten rounds.",
+   "ur_title": "لمبی سانس باہر",
+   "ur_instructions": "ناک سے 4 گنتی سانس لیں، 6 سے 8 گنتی آہستہ چھوڑیں۔ دس بار۔",
+   "safety_note": "Stop if you feel lightheaded."
+  },
+  {
+   "key": "one_priority",
+   "type": "practical_action",
+   "mode": "practical",
+   "seconds": 180,
+   "goals": [
+    "discipline",
+    "business_wealth",
+    "study_exams",
+    "career_interview"
+   ],
+   "states": [
+    "distracted",
+    "uncertain"
+   ],
+   "en_title": "One priority",
+   "en_instructions": "Write the single task that would make today a win. Add when and where you will start it.",
+   "ur_title": "ایک ترجیح",
+   "ur_instructions": "وہ ایک کام لکھیں جو آج کو کامیاب بنا دے۔ ساتھ لکھیں کب اور کہاں شروع کریں گے۔",
+   "safety_note": null
+  },
+  {
+   "key": "if_then_plan",
+   "type": "practical_action",
+   "mode": "scientific",
+   "seconds": 180,
+   "goals": [
+    "discipline",
+    "health_energy",
+    "study_exams"
+   ],
+   "states": [
+    "motivated",
+    "distracted"
+   ],
+   "en_title": "If-then plan",
+   "en_instructions": "Complete: If it is [time/place], then I will [small action]. Keep the action under 5 minutes.",
+   "ur_title": "اگر-تو منصوبہ",
+   "ur_instructions": "مکمل کریں: اگر [وقت/جگہ] ہو تو میں [چھوٹا کام] کروں گا۔ کام 5 منٹ سے کم رکھیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "focus_block_25",
+   "type": "practical_action",
+   "mode": "scientific",
+   "seconds": 1500,
+   "goals": [
+    "study_exams",
+    "creativity",
+    "business_wealth"
+   ],
+   "states": [
+    "motivated"
+   ],
+   "en_title": "25-minute focus block",
+   "en_instructions": "Silence your phone, set a 25-minute timer, work on one thing only. Note what you finished.",
+   "ur_title": "25 منٹ کا فوکس",
+   "ur_instructions": "فون خاموش کریں، 25 منٹ کا ٹائمر لگائیں، صرف ایک کام کریں۔ آخر میں لکھیں کیا مکمل ہوا۔",
+   "safety_note": null
+  },
+  {
+   "key": "active_recall",
+   "type": "practical_action",
+   "mode": "scientific",
+   "seconds": 600,
+   "goals": [
+    "study_exams"
+   ],
+   "states": [
+    "calm",
+    "motivated"
+   ],
+   "en_title": "Active recall",
+   "en_instructions": "Close your notes. Write everything you remember about one topic, then check and mark gaps.",
+   "ur_title": "یاد سے دہرائی",
+   "ur_instructions": "نوٹس بند کریں۔ ایک موضوع کے بارے میں جو یاد ہے لکھیں، پھر چیک کر کے کمی نشان زد کریں۔",
+   "safety_note": null
+  },
+  {
+   "key": "money_check",
+   "type": "practical_action",
+   "mode": "practical",
+   "seconds": 300,
+   "goals": [
+    "business_wealth"
+   ],
+   "states": [
+    "uncertain"
+   ],
+   "en_title": "5-minute money check",
+   "en_instructions": "Review yesterday's income and spending. Write one decision for today.",
+   "ur_title": "5 منٹ مالی جائزہ",
+   "ur_instructions": "کل کی آمدن اور خرچ دیکھیں۔ آج کے لیے ایک فیصلہ لکھیں۔",
+   "safety_note": "This is a reflection exercise, not financial advice."
+  },
+  {
+   "key": "customer_reachout",
+   "type": "practical_action",
+   "mode": "motivational",
+   "seconds": 600,
+   "goals": [
+    "business_wealth",
+    "career_interview"
+   ],
+   "states": [
+    "motivated"
+   ],
+   "en_title": "One reach-out",
+   "en_instructions": "Send one useful message to a customer, colleague or contact. Keep it short and specific.",
+   "ur_title": "ایک رابطہ",
+   "ur_instructions": "کسی گاہک، ساتھی یا جاننے والے کو ایک مفید، مختصر پیغام بھیجیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "star_story",
+   "type": "reflection",
+   "mode": "practical",
+   "seconds": 420,
+   "goals": [
+    "career_interview",
+    "confidence"
+   ],
+   "states": [
+    "uncertain"
+   ],
+   "en_title": "STAR story",
+   "en_instructions": "Write one achievement as Situation, Task, Action, Result. Practise saying it aloud once.",
+   "ur_title": "STAR کہانی",
+   "ur_instructions": "ایک کامیابی کو صورتحال، ذمہ داری، عمل، نتیجہ کی ترتیب سے لکھیں۔ ایک بار بلند آواز سے دہرائیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "evidence_list",
+   "type": "reflection",
+   "mode": "scientific",
+   "seconds": 240,
+   "goals": [
+    "confidence",
+    "life_transition"
+   ],
+   "states": [
+    "uncertain",
+    "stressed"
+   ],
+   "en_title": "Evidence list",
+   "en_instructions": "Write three things you handled well this month. Next to each, the skill it shows.",
+   "ur_title": "ثبوت کی فہرست",
+   "ur_instructions": "اس مہینے کی تین چیزیں لکھیں جو آپ نے اچھی طرح سنبھالیں، اور ہر ایک کے ساتھ اس سے ظاہر ہونے والی صلاحیت۔",
+   "safety_note": null
+  },
+  {
+   "key": "reframe_thought",
+   "type": "reflection",
+   "mode": "scientific",
+   "seconds": 300,
+   "goals": [
+    "stress_calm",
+    "confidence"
+   ],
+   "states": [
+    "stressed",
+    "uncertain"
+   ],
+   "en_title": "Reframe one thought",
+   "en_instructions": "Write a worrying thought. Ask: what is another way to see this? Write a balanced version.",
+   "ur_title": "ایک خیال کو نئے زاویے سے",
+   "ur_instructions": "ایک پریشان کن خیال لکھیں۔ پوچھیں: اسے کیسے مختلف دیکھا جا سکتا ہے؟ متوازن صورت لکھیں۔",
+   "safety_note": "If distress is persistent or severe, please talk to a qualified professional."
+  },
+  {
+   "key": "gratitude_three",
+   "type": "reflection",
+   "mode": "spiritual_reflection",
+   "seconds": 180,
+   "goals": [
+    "spiritual_reflection",
+    "stress_calm",
+    "relationships"
+   ],
+   "states": [
+    "calm",
+    "low_energy"
+   ],
+   "en_title": "Three gratitudes",
+   "en_instructions": "Write three specific things you are grateful for today and why each matters.",
+   "ur_title": "تین شکر",
+   "ur_instructions": "آج کی تین خاص چیزیں لکھیں جن پر شکر گزار ہیں اور کیوں۔",
+   "safety_note": null
+  },
+  {
+   "key": "evening_review",
+   "type": "reflection",
+   "mode": "mixed",
+   "seconds": 300,
+   "goals": [
+    "discipline",
+    "spiritual_reflection",
+    "life_transition"
+   ],
+   "states": [
+    "calm"
+   ],
+   "en_title": "Evening review",
+   "en_instructions": "What went well? What will I do differently tomorrow? One line each.",
+   "ur_title": "شام کا جائزہ",
+   "ur_instructions": "آج کیا اچھا ہوا؟ کل کیا مختلف کروں گا؟ ہر ایک ایک سطر۔",
+   "safety_note": null
+  },
+  {
+   "key": "intention_morning",
+   "type": "reflection",
+   "mode": "motivational",
+   "seconds": 120,
+   "goals": [
+    "confidence",
+    "discipline",
+    "creativity"
+   ],
+   "states": [
+    "motivated",
+    "uncertain"
+   ],
+   "en_title": "Morning intention",
+   "en_instructions": "Write one word for how you want to show up today and one action that proves it.",
+   "ur_title": "صبح کی نیت",
+   "ur_instructions": "ایک لفظ لکھیں کہ آج آپ کیسے رہنا چاہتے ہیں، اور ایک کام جو اسے ثابت کرے۔",
+   "safety_note": null
+  },
+  {
+   "key": "faith_routine_check",
+   "type": "reflection",
+   "mode": "religious_practice",
+   "seconds": 180,
+   "goals": [
+    "religious_routine",
+    "spiritual_reflection"
+   ],
+   "states": [
+    "calm",
+    "uncertain"
+   ],
+   "en_title": "Faith routine check-in",
+   "en_instructions": "Following your own tradition, note one practice you want to keep today and the time you will do it.",
+   "ur_title": "مذہبی معمول کا جائزہ",
+   "ur_instructions": "اپنی روایت کے مطابق آج کا ایک عمل اور اس کا وقت لکھیں جسے آپ قائم رکھنا چاہتے ہیں۔",
+   "safety_note": "Fortunis8 does not interpret religious rulings; follow your own scholars and tradition."
+  },
+  {
+   "key": "kind_message",
+   "type": "practical_action",
+   "mode": "practical",
+   "seconds": 180,
+   "goals": [
+    "relationships"
+   ],
+   "states": [
+    "calm",
+    "motivated"
+   ],
+   "en_title": "One kind message",
+   "en_instructions": "Send a short, genuine message of appreciation to someone.",
+   "ur_title": "ایک محبت بھرا پیغام",
+   "ur_instructions": "کسی کو مختصر، سچا قدردانی کا پیغام بھیجیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "listen_fully",
+   "type": "reflection",
+   "mode": "mindfulness",
+   "seconds": 300,
+   "goals": [
+    "relationships"
+   ],
+   "states": [
+    "calm"
+   ],
+   "en_title": "Listen fully",
+   "en_instructions": "In your next conversation, listen without planning your reply. Afterwards note one thing you learned.",
+   "ur_title": "پوری توجہ سے سننا",
+   "ur_instructions": "اگلی گفتگو میں جواب سوچے بغیر سنیں۔ بعد میں ایک سیکھی ہوئی بات لکھیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "idea_capture",
+   "type": "practical_action",
+   "mode": "practical",
+   "seconds": 300,
+   "goals": [
+    "creativity",
+    "business_wealth"
+   ],
+   "states": [
+    "motivated",
+    "distracted"
+   ],
+   "en_title": "Idea capture",
+   "en_instructions": "Write 10 rough ideas on one problem in 5 minutes. Circle one to try.",
+   "ur_title": "خیالات کی فہرست",
+   "ur_instructions": "ایک مسئلے پر 5 منٹ میں 10 کچے خیالات لکھیں۔ ایک کو آزمانے کے لیے چنیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "make_small",
+   "type": "practical_action",
+   "mode": "motivational",
+   "seconds": 900,
+   "goals": [
+    "creativity"
+   ],
+   "states": [
+    "low_energy",
+    "motivated"
+   ],
+   "en_title": "Make something small",
+   "en_instructions": "Spend 15 minutes making anything: a sketch, a paragraph, a tune. Done beats perfect.",
+   "ur_title": "کچھ چھوٹا بنائیں",
+   "ur_instructions": "15 منٹ کچھ بھی بنائیں: خاکہ، پیراگراف، دھن۔ مکمل، کامل سے بہتر ہے۔",
+   "safety_note": null
+  },
+  {
+   "key": "walk_10",
+   "type": "movement",
+   "mode": "scientific",
+   "seconds": 600,
+   "goals": [
+    "health_energy",
+    "stress_calm",
+    "creativity"
+   ],
+   "states": [
+    "low_energy",
+    "stressed"
+   ],
+   "en_title": "10-minute walk",
+   "en_instructions": "Take a 10-minute walk, outdoors if you can. Notice five things you see.",
+   "ur_title": "10 منٹ کی سیر",
+   "ur_instructions": "10 منٹ چلیں، ممکن ہو تو باہر۔ پانچ چیزیں نوٹ کریں جو نظر آئیں۔",
+   "safety_note": "Choose a pace that is comfortable for your health."
+  },
+  {
+   "key": "stretch_5",
+   "type": "movement",
+   "mode": "mindfulness",
+   "seconds": 300,
+   "goals": [
+    "health_energy",
+    "sleep_recovery"
+   ],
+   "states": [
+    "low_energy",
+    "stressed"
+   ],
+   "en_title": "Gentle 5-minute stretch",
+   "en_instructions": "Neck, shoulders, back and legs, slowly, with easy breathing. No pain.",
+   "ur_title": "5 منٹ ہلکی کھنچائی",
+   "ur_instructions": "گردن، کندھے، کمر اور ٹانگیں، آہستہ، آرام سے سانس کے ساتھ۔ درد نہ ہو۔",
+   "safety_note": "Skip any movement that hurts; ask a clinician if you have an injury."
+  },
+  {
+   "key": "water_habit",
+   "type": "practical_action",
+   "mode": "practical",
+   "seconds": 60,
+   "goals": [
+    "health_energy"
+   ],
+   "states": [
+    "low_energy"
+   ],
+   "en_title": "Water anchor",
+   "en_instructions": "Drink a glass of water now and link the next glass to a meal.",
+   "ur_title": "پانی کی عادت",
+   "ur_instructions": "ابھی ایک گلاس پانی پئیں اور اگلا گلاس کسی کھانے سے جوڑ دیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "wind_down",
+   "type": "practical_action",
+   "mode": "scientific",
+   "seconds": 600,
+   "goals": [
+    "sleep_recovery",
+    "stress_calm"
+   ],
+   "states": [
+    "stressed"
+   ],
+   "en_title": "Wind-down",
+   "en_instructions": "Dim lights, put the phone away, and write tomorrow's first task so your mind can let go.",
+   "ur_title": "سونے کی تیاری",
+   "ur_instructions": "روشنی کم کریں، فون دور رکھیں، اور کل کا پہلا کام لکھ دیں تاکہ ذہن پرسکون ہو۔",
+   "safety_note": null
+  },
+  {
+   "key": "body_scan",
+   "type": "breath",
+   "mode": "mindfulness",
+   "seconds": 420,
+   "goals": [
+    "sleep_recovery",
+    "stress_calm"
+   ],
+   "states": [
+    "stressed"
+   ],
+   "en_title": "Body scan",
+   "en_instructions": "Lying down, move attention slowly from toes to head, relaxing each area.",
+   "ur_title": "جسم کا جائزہ",
+   "ur_instructions": "لیٹ کر توجہ آہستہ پاؤں سے سر تک لے جائیں اور ہر حصے کو ڈھیلا چھوڑیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "next_step_visual",
+   "type": "visualization",
+   "mode": "visualization",
+   "seconds": 180,
+   "goals": [
+    "career_interview",
+    "confidence",
+    "business_wealth"
+   ],
+   "states": [
+    "uncertain"
+   ],
+   "en_title": "See the next step",
+   "en_instructions": "Close your eyes and picture yourself doing the next step: where, when, the first move. Then do the first move.",
+   "ur_title": "اگلا قدم تصور کریں",
+   "ur_instructions": "آنکھیں بند کر کے اگلا قدم کرتے خود کو دیکھیں: کہاں، کب، پہلی حرکت۔ پھر وہ پہلی حرکت کریں۔",
+   "safety_note": null
+  },
+  {
+   "key": "transition_anchor",
+   "type": "reflection",
+   "mode": "mixed",
+   "seconds": 300,
+   "goals": [
+    "life_transition"
+   ],
+   "states": [
+    "uncertain",
+    "stressed"
+   ],
+   "en_title": "Steady anchor",
+   "en_instructions": "Write what is changing, what stays the same, and one routine you will keep this week.",
+   "ur_title": "مضبوط سہارا",
+   "ur_instructions": "لکھیں کیا بدل رہا ہے، کیا وہی ہے، اور اس ہفتے کون سا معمول قائم رکھیں گے۔",
+   "safety_note": null
+  },
+  {
+   "key": "streak_promise",
+   "type": "practical_action",
+   "mode": "motivational",
+   "seconds": 60,
+   "goals": [
+    "discipline"
+   ],
+   "states": [
+    "low_energy"
+   ],
+   "en_title": "Two-minute promise",
+   "en_instructions": "Pick a habit and do just two minutes of it now. Keep the streak, not the pressure.",
+   "ur_title": "دو منٹ کا وعدہ",
+   "ur_instructions": "ایک عادت چنیں اور ابھی صرف دو منٹ کریں۔ تسلسل اہم ہے، دباؤ نہیں۔",
+   "safety_note": null
+  },
+  {
+   "key": "reading_reflect",
+   "type": "reading",
+   "mode": "mixed",
+   "seconds": 240,
+   "goals": [
+    "spiritual_reflection",
+    "creativity",
+    "confidence"
+   ],
+   "states": [
+    "uncertain",
+    "calm"
+   ],
+   "en_title": "Optional reading as reflection",
+   "en_instructions": "Draw your optional reading (tarot, horoscope or palm prompt). Ask: what does this invite me to notice today? Write one action.",
+   "ur_title": "اختیاری ریڈنگ بطور غور",
+   "ur_instructions": "اپنی اختیاری ریڈنگ دیکھیں (ٹیرو، زائچہ یا ہتھیلی کا اشارہ)۔ پوچھیں: یہ آج مجھے کس بات پر غور کی دعوت دیتی ہے؟ ایک عمل لکھیں۔",
+   "safety_note": "Readings are for reflection and curiosity; they do not predict outcomes."
+  }
+ ]
+}

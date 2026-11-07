@@ -18,6 +18,7 @@ from app.services.fortune_service import (
     update_profile,
 )
 from app.services.quest_service import get_quest_summary
+from app.services.path_service import build_path_conversation, complete_path_quest, path_quests
 from app.services.streak_service import apply_daily_reward
 from app.services.telegram_service import generate_horoscope, generate_tarot_reading
 from app.utils.logging import get_logger
@@ -40,14 +41,14 @@ def _safe_reading(generator, *args, **kwargs) -> str:
 
 def _default_reply(user) -> str:
     return (
-        "I can guide you with your fortune, tarot, moods, persona, and quest path.\n\n"
-        "Try natural messages like:\n"
-        "- tell me my fortune\n"
-        "- I feel overwhelmed\n"
-        "- draw tarot\n"
-        "- show my profile\n"
-        "- claim my daily reward\n"
-        "- I want to become a Moon Reader"
+        "I can help you build a daily growth path with small rituals and quests.\n\n"
+        "Try:\n"
+        "- /path to choose goals and guidance with buttons\n"
+        "- /quests to see your path quests\n"
+        "- /done daily_ritual to test progression\n"
+        "- /daily to claim the daily reward\n"
+        "- /profile to see your profile\n\n"
+        "Optional readings are available for reflection, not prediction."
     )
 
 
@@ -58,16 +59,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     mood = profile.get("current_mood") or "balanced"
 
     greeting = (
-        "Welcome to Fortunis8 ✨\n\n"
-        f"Your guide is: {persona}\n"
-        f"Your current mood: {mood}\n\n"
-        "You can speak naturally to the bot, or use:\n"
-        "/personalize - choose your persona and mood\n"
-        "/fortune - get a horoscope\n"
-        "/tarot - draw a tarot reading\n"
-        "/profile - view your profile\n"
-        "/quests - see your current quests\n"
-        "/daily - claim your daily reward"
+        "Welcome to Fortunis8 — your daily growth companion.\n\n"
+        "Start with /path to choose a goal, guidance mode, current state, and realistic rhythm.\n"
+        "Then use /quests and /done to test the gamified ritual loop.\n\n"
+        f"Legacy profile: {persona} · mood {mood}\n"
+        "Optional readings remain available through /fortune and /tarot for reflection."
     )
     await update.message.reply_text(greeting)
 
@@ -190,6 +186,10 @@ async def horoscope(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user = update.effective_user
     profile = ensure_profile(user)
+    path_profile = context.user_data.get("path_profile")
+    path_summary = "Not started"
+    if path_profile:
+        path_summary = ", ".join(path_profile.get("goals", [])) or "No goal selected"
     message = (
         f"User: {user.first_name or 'Seeker'}\n"
         f"Username: @{user.username or 'unknown'}\n"
@@ -198,12 +198,16 @@ async def profile(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         f"Zodiac Sign: {profile.get('zodiac_sign') or 'Not set'}\n"
         f"Diamonds: {profile.get('diamonds', 0)}\n"
         f"Level: {profile.get('level', 1)}\n"
-        f"Streak: {profile.get('streak_count', 0)}"
+        f"Streak: {profile.get('streak_count', 0)}\n"
+        f"Daily path goals: {path_summary}"
     )
     await update.message.reply_text(message)
 
 
 async def quests(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if getattr(context, "user_data", {}).get("path_profile"):
+        await path_quests(update, context)
+        return
     await update.message.reply_text(get_quest_summary(update.effective_user))
 
 
@@ -248,6 +252,11 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
     if "quest" in lower_text:
         await quests(update, context)
+        return
+
+    if lower_text.startswith("done "):
+        context.user_data["pending_quest_key"] = text.split(maxsplit=1)[1]
+        await complete_path_quest(update, context)
         return
 
     if "daily reward" in lower_text or "claim my reward" in lower_text:
@@ -296,6 +305,7 @@ def build_application():
         fallbacks=[CommandHandler("cancel", start)],
     )
 
+    application.add_handler(build_path_conversation())
     application.add_handler(personalization)
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("fortune", fortune))
@@ -303,6 +313,7 @@ def build_application():
     application.add_handler(CommandHandler("horoscope", horoscope))
     application.add_handler(CommandHandler("profile", profile))
     application.add_handler(CommandHandler("quests", quests))
+    application.add_handler(CommandHandler("done", complete_path_quest))
     application.add_handler(CommandHandler("daily", daily_reward))
     application.add_handler(CommandHandler("reward", daily_reward))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_free_text))

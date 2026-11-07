@@ -77,7 +77,9 @@ class SupabaseProfileRepository:
             .upsert(
                 {
                     "auth_user_id": profile.user_id,
-                    "telegram_id": None,
+                    # Legacy Telegram profiles require this column. Web-auth
+                    # profiles use a stable namespaced surrogate.
+                    "telegram_id": f"web:{profile.user_id}",
                     "language": profile.language,
                     "timezone": profile.timezone or "UTC",
                     "onboarding_status": "confirmed",

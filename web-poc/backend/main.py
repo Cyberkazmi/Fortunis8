@@ -21,8 +21,8 @@ from backend.contracts import (
     RitualCompletionResponse,
     RitualResponse,
 )
-from backend.completion_service import InMemoryCompletionRepository
-from backend.entitlements import EntitlementRepository, get_entitlement
+from backend.completion_service import InMemoryCompletionRepository, SupabaseCompletionRepository
+from backend.entitlements import EntitlementRepository, SupabaseEntitlementRepository, get_entitlement
 from backend.profile_repository import SupabaseProfileRepository
 from backend.profile_service import (
     ProfileRepository,
@@ -48,9 +48,31 @@ def _build_profile_repository() -> Any:
     return SupabaseProfileRepository(create_client(url, service_key))
 
 
+def _build_entitlement_repository() -> EntitlementRepository | None:
+    if os.getenv("WEB_POC_PROFILE_REPOSITORY", "memory").lower() != "supabase":
+        return None
+    url = os.getenv("SUPABASE_URL")
+    service_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    if not url or not service_key:
+        raise RuntimeError(
+            "WEB_POC_PROFILE_REPOSITORY=supabase requires SUPABASE_URL and "
+            "SUPABASE_SERVICE_ROLE_KEY."
+        )
+    from supabase import create_client
+
+    return SupabaseEntitlementRepository(create_client(url, service_key))
+
+
 profile_repository = _build_profile_repository()
-entitlement_repository: EntitlementRepository | None = None
-completion_repository = InMemoryCompletionRepository()
+entitlement_repository: EntitlementRepository | None = _build_entitlement_repository()
+if os.getenv("WEB_POC_PROFILE_REPOSITORY", "memory").lower() == "supabase":
+    from supabase import create_client
+
+    completion_repository = SupabaseCompletionRepository(
+        create_client(os.environ["SUPABASE_URL"], os.environ["SUPABASE_SERVICE_ROLE_KEY"])
+    )
+else:
+    completion_repository = InMemoryCompletionRepository()
 
 
 def _entitlement(user_id: str) -> dict[str, Any]:

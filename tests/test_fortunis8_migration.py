@@ -6,6 +6,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_DIR = ROOT / "supabase" / "migrations"
 USERS_MIGRATION = MIGRATION_DIR / "20261109071117_fortunis8_step1_users.sql"
 MIGRATION = MIGRATION_DIR / "20261109073612_fortunis8_core.sql"
+IDEMPOTENCY_MIGRATION = MIGRATION_DIR / "20261109081835_fortunis8_premium_redemption_idempotency.sql"
 
 
 def test_cli_migration_filenames_match_recorded_supabase_history():
@@ -15,6 +16,8 @@ def test_cli_migration_filenames_match_recorded_supabase_history():
     )
     assert (ROOT / "supabase" / "config.toml").is_file()
     assert all((MIGRATION_DIR / f"{version}_{name}.sql").is_file() for version, name in recorded)
+    assert IDEMPOTENCY_MIGRATION.is_file()
+    assert IDEMPOTENCY_MIGRATION.name not in {f"{version}_{name}.sql" for version, name in recorded}
     assert not (ROOT / "migrations").exists()
 
 
@@ -63,3 +66,21 @@ def test_core_migration_contains_idempotent_daily_game_and_stars_operations():
     assert "idempotency_key text not null unique" in sql
     assert "telegram_payment_charge_id text not null unique" in sql
     assert "p_currency <> 'xtr'" in sql
+
+
+def test_pending_premium_redemption_migration_is_additive_and_update_keyed():
+    sql = IDEMPOTENCY_MIGRATION.read_text().lower()
+    assert "create table if not exists public.fortunis8_premium_redemption_receipts" in sql
+    assert "telegram_update_id bigint primary key" in sql
+    assert "alter table public.fortunis8_premium_redemption_receipts enable row level security" in sql
+    assert "revoke all on table public.fortunis8_premium_redemption_receipts from anon, authenticated" in sql
+    assert "grant all on table public.fortunis8_premium_redemption_receipts to service_role" in sql
+    assert "function public.fortunis8_redeem_premium_reading_for_update" in sql
+    assert "on conflict (telegram_update_id) do nothing" in sql
+    assert "on delete cascade" not in sql
+    assert "'duplicate', true" in sql
+    assert "drop table" not in sql
+    assert not re.search(
+        r"alter\s+table\s+public\.(profiles|fortune_readings|rewards|quests|daily_streaks|mini_games)\b",
+        sql,
+    )

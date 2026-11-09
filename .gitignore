@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 supabase/.temp/
 supabase/.branches/
+supabase/functions/.env

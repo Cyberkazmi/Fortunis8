@@ -1,19 +1,15 @@
 # Fortunis8 validation
 
-## Local checks
+## Checks run
 
-The package was checked with the repository's declared dependencies in an isolated Python 3.12 environment.
-
-- Full `pytest` suite: **50 passed**. The one remaining warning is a third-party Starlette deprecation notice about `python_multipart`.
-- `python -m compileall -q app tests`: passed.
-- Real `python-telegram-bot` Application construction with a synthetic test-only token: passed; 37 handlers registered across groups `-2`, `-1`, and `0`. No Telegram API request was made, and no Supabase store was configured for this construction test.
-- `pglast` SQL parsing: `supabase/migrations/20261109071117_fortunis8_step1_users.sql` parsed as 10 statements; `supabase/migrations/20261109073612_fortunis8_core.sql` parsed as 40 statements. This parses the SQL migration envelope but does not execute the PL/pgSQL functions.
-- Static migration checks confirm the core migration creates only `fortunis8_*` tables, enables RLS on those new tables, and does not drop or alter the existing product tables.
-- Read-only Supabase verification confirmed history rows `20261109071117 / fortunis8_step1_users` and `20261109073612 / fortunis8_core`; the seven Fortunis8 tables' columns/types/nullability, checks, keys, foreign keys and indexes match the migration DDL, all seven have RLS enabled, and the expected RPC signatures plus `fortunis8_set_updated_at` trigger exist. No database writes were made.
-- `git diff --check`: passed.
+- Full Python suite: **55 passed** in the isolated Python 3.12 environment; one third-party Starlette deprecation warning remains. Tests cover update-ID pass-through in Python redemption and same-ID replay handling.
+- Deno 2 formatting, lint, and TypeScript checks passed. **12 webhook tests passed**, covering authentication, private-chat flow, malformed updates, Stars checks, horoscope privacy, and premium redemption replay with the same update ID. Commands: `npx --yes deno@2 fmt supabase/functions/telegram-webhook/*.ts`; `npx --yes deno@2 lint supabase/functions/telegram-webhook`; `npx --yes deno@2 check supabase/functions/telegram-webhook/index.ts supabase/functions/telegram-webhook/handler_test.ts`; `npx --yes deno@2 test --allow-read=supabase/config.toml supabase/functions/telegram-webhook/handler_test.ts`.
+- `pglast` parsed all **9 top-level statements** in the pending migration and `supabase/config.toml` parsed as valid TOML. Static tests check that the migration adds only Fortunis8 objects, enables RLS, denies client roles, grants access only to `service_role`, keys receipts by `telegram_update_id`, and returns stored results on duplicate input.
+- A disposable local PGlite PostgreSQL-compatible engine executed the two existing Fortunis8 migrations plus the pending migration. It confirmed that the first premium redemption consumes one credit and creates one reading/event; the same update ID returns the same reading with no second deduction; a different focus for the same ID is rejected; a no-credit result remains no-credit when replayed after the balance changes; and a new update ID can redeem once. This test used local synthetic data only, not Supabase.
+- The previously applied remote migration history/schema for `20261109071117 / fortunis8_step1_users` and `20261109073612 / fortunis8_core` was read-only verified in the earlier validation pass. The new migration is **pending review and unapplied**; no remote database was written.
 
 ## Not live-tested
 
-The local test suite used mocks; it made no live Supabase requests. A separate read-only schema/history inspection confirmed the deployed migration records and Fortunis8 object structure. The bot was not connected to Telegram, no live write or Telegram Stars transaction was attempted, and production connectivity is untested. The Supabase CLI binary was unavailable in this environment, so `supabase migration list`/`db push` were not run; the files now follow the CLI's standard path and exact remote version/name records.
+No live Telegram or Supabase request, webhook registration, Edge Function deployment, or Stars transaction was performed. The updated Python and Deno code call the new RPC, so do not deploy them until the migration is reviewed and applied. The local PGlite execution is not a hosted Supabase rollout. See [`DEPLOYMENT.md`](DEPLOYMENT.md) and [`docs/edge-function-launch.md`](docs/edge-function-launch.md).
 
-The changes are on `feat/fortunis8-bilingual-bot`; [PR #4 is open against `main` and not merged](https://github.com/Cyberkazmi/Fortunis8/pull/4). See [`DEPLOYMENT.md`](DEPLOYMENT.md) for the remaining account-side steps.
+PR [#4](https://github.com/Cyberkazmi/Fortunis8/pull/4) remains open against `main` and unmerged.

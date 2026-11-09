@@ -77,6 +77,15 @@ class SupabaseRestUserStore:
             raise ValueError("telegram_user_id must be a positive integer.")
 
     @staticmethod
+    def _validate_update_id(telegram_update_id: int) -> None:
+        if (
+            isinstance(telegram_update_id, bool)
+            or not isinstance(telegram_update_id, int)
+            or not 0 <= telegram_update_id <= 9_007_199_254_740_991
+        ):
+            raise ValueError("telegram_update_id must be a nonnegative safe integer.")
+
+    @staticmethod
     def _decode_json(response: httpx.Response) -> Any:
         try:
             return response.json()
@@ -392,15 +401,18 @@ class SupabaseRestUserStore:
     async def redeem_premium_reading(
         self,
         telegram_user_id: int,
+        telegram_update_id: int,
         focus: str,
         title: str,
         content: str,
     ) -> dict[str, Any]:
         self._validate_user_id(telegram_user_id)
+        self._validate_update_id(telegram_update_id)
         result = await self._rpc(
-            "fortunis8_redeem_premium_reading",
+            "fortunis8_redeem_premium_reading_for_update",
             {
                 "p_telegram_user_id": telegram_user_id,
+                "p_telegram_update_id": telegram_update_id,
                 "p_focus": focus,
                 "p_title": title[:120],
                 "p_content": content[:3500],

@@ -63,6 +63,7 @@ TEXT: dict[str, dict[str, str]] = {
         "premium_price": "Choose a focus for one detailed reading ({price} Telegram Stars). Payment is only for this reading; diamonds are not sold.",
         "credits_available": "You have {credits} premium reading credit(s). Choose a focus to use one.",
         "payment_credit": "Payment verified. Your detailed reading is below. Remaining credit(s): {credits}.",
+        "premium_update_duplicate": "This Telegram request was already processed. Use /last to view your latest saved reading.",
         "payment_verified_credit_pending": "Payment verified and one reading credit is ready. Open Premium palm reading from the menu to use it.",
         "payment_duplicate": "This Telegram Stars payment was already processed. Use /last to view your latest saved reading.",
         "payment_invalid": "We could not verify this payment with the Fortunis8 database. Do not pay again; ask the bot owner to review the transaction.",
@@ -105,6 +106,7 @@ TEXT: dict[str, dict[str, str]] = {
         "premium_price": "ایک تفصیلی مطالعے کے لیے موضوع منتخب کریں ({price} Telegram Stars)۔ ادائیگی صرف اس مطالعے کے لیے ہے؛ ڈائمنڈز فروخت نہیں ہوتے۔",
         "credits_available": "آپ کے پاس {credits} پریمیم مطالعے کا کریڈٹ ہے۔ استعمال کے لیے موضوع منتخب کریں۔",
         "payment_credit": "ادائیگی کی تصدیق ہو گئی۔ آپ کا تفصیلی مطالعہ نیچے ہے۔ باقی کریڈٹ: {credits}۔",
+        "premium_update_duplicate": "یہ Telegram درخواست پہلے ہی پراسیس ہو چکی ہے۔ تازہ ترین محفوظ مطالعے کے لیے /last بھیجیں۔",
         "payment_verified_credit_pending": "ادائیگی کی تصدیق ہو گئی اور ایک مطالعے کا کریڈٹ تیار ہے۔ مینو میں Premium palm reading کھول کر استعمال کریں۔",
         "payment_duplicate": "یہ Telegram Stars ادائیگی پہلے ہی پراسیس ہو چکی ہے۔ تازہ ترین محفوظ مطالعے کے لیے /last بھیجیں۔",
         "payment_invalid": "Fortunis8 database اس ادائیگی کی تصدیق نہیں کر سکا۔ دوبارہ ادائیگی نہ کریں؛ بوٹ کے مالک سے transaction چیک کروائیں۔",
@@ -464,12 +466,15 @@ async def _redeem_premium(update: Update, context: ContextTypes.DEFAULT_TYPE, fo
         label = FOCUS_LABELS[language][focus]
         content = _with_persona(palm_reading(label, language, premium=True), account["selected_persona"], language)
         result = await store.redeem_premium_reading(
-            user.id, focus, TEXT[language]["palm_premium_title"], content
+            user.id, update.update_id, focus, TEXT[language]["palm_premium_title"], content
         )
     except (PersistenceError, ValueError, KeyError):
         logger.warning("Premium palm reading redemption failed.")
         await update.effective_message.reply_text(TEXT[language]["unavailable"])
         return None
+    if result.get("duplicate"):
+        await update.effective_message.reply_text(TEXT[language]["premium_update_duplicate"])
+        return result
     if not result.get("ok"):
         await update.effective_message.reply_text(
             TEXT[language]["premium_price"].format(price=settings.PREMIUM_PALM_PRICE_STARS),
@@ -833,11 +838,14 @@ async def successful_payment(update: Update, context: ContextTypes.DEFAULT_TYPE)
             account["selected_persona"], language,
         )
         redeemed = await store.redeem_premium_reading(
-            update.effective_user.id, focus, TEXT[language]["palm_premium_title"], content
+            update.effective_user.id, update.update_id, focus, TEXT[language]["palm_premium_title"], content
         )
     except (PersistenceError, ValueError, KeyError):
         logger.warning("Premium reading delivery preparation failed after payment.")
         await update.effective_message.reply_text(TEXT[language]["payment_verified_credit_pending"])
+        return
+    if redeemed.get("duplicate"):
+        await update.effective_message.reply_text(TEXT[language]["premium_update_duplicate"])
         return
     if not redeemed.get("ok"):
         await update.effective_message.reply_text(TEXT[language]["payment_verified_credit_pending"])

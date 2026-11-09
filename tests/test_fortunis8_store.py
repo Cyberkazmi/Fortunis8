@@ -144,5 +144,42 @@ class StoreTests(unittest.IsolatedAsyncioTestCase):
             await client.aclose()
 
 
+    async def test_premium_redemption_uses_telegram_update_idempotency_rpc(self):
+        seen = []
+        results = [
+            {"ok": True, "duplicate": False, "credits_remaining": 0},
+            {"ok": True, "duplicate": True, "credits_remaining": 0},
+        ]
+
+        async def handler(request):
+            seen.append(request)
+            return httpx.Response(200, json=results[len(seen) - 1])
+
+        client = httpx.AsyncClient(
+            base_url="https://example.supabase.co/rest/v1/",
+            transport=httpx.MockTransport(handler),
+        )
+        store = SupabaseRestUserStore("https://example.supabase.co", TEST_SECRET, client=client)
+        try:
+            first = await store.redeem_premium_reading(77, 12345, "work", "title", "reading")
+            replay = await store.redeem_premium_reading(77, 12345, "work", "title", "reading")
+            with self.assertRaises(ValueError):
+                await store.redeem_premium_reading(77, -1, "work", "title", "reading")
+        finally:
+            await client.aclose()
+
+        self.assertFalse(first["duplicate"])
+        self.assertTrue(replay["duplicate"])
+        self.assertEqual(len(seen), 2)
+        self.assertTrue(all(
+            request.url.path == "/rest/v1/rpc/fortunis8_redeem_premium_reading_for_update"
+            for request in seen
+        ))
+        self.assertEqual(
+            [json.loads(request.read())["p_telegram_update_id"] for request in seen],
+            [12345, 12345],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

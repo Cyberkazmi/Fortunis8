@@ -9,6 +9,7 @@ from app.bot.fortunis8_handlers import (
     fortune_command,
     horoscope_input,
     pre_checkout,
+    route_callback,
     start,
     start_game,
     successful_payment,
@@ -37,11 +38,12 @@ class FakeStore:
         pass
 
 
-def make_update(*, text="", chat_type="private", user_id=42, callback=None, payment=None):
+def make_update(*, text="", chat_type="private", user_id=42, callback=None, payment=None, update_id=77):
     message = SimpleNamespace(text=text, reply_text=AsyncMock(), successful_payment=payment)
     if callback is not None:
         callback.message = message
     return SimpleNamespace(
+        update_id=update_id,
         effective_user=SimpleNamespace(id=user_id, first_name="Reader"),
         effective_chat=SimpleNamespace(type=chat_type, id=123),
         effective_message=message,
@@ -140,12 +142,35 @@ class Fortunis8HandlerTests(unittest.TestCase):
             total_amount=25,
             currency="XTR",
         )
-        update = make_update(payment=payment)
+        update = make_update(payment=payment, update_id=901)
         context = make_context(store)
         asyncio.run(successful_payment(update, context))
         store.record_star_payment.assert_awaited_once_with(42, "fortunis8:42:payload", "charge-1", 25, "XTR")
         store.redeem_premium_reading.assert_awaited_once()
+        self.assertEqual(store.redeem_premium_reading.await_args.args[:3], (42, 901, "work"))
         self.assertIn("Your detailed reading is below", update.effective_message.reply_text.await_args_list[-1].args[0])
+
+    def test_duplicate_premium_update_reuses_update_id_without_resending_a_reading(self):
+        store = FakeStore()
+        store.redeem_premium_reading.side_effect = [
+            {"ok": True, "duplicate": False, "credits_remaining": 0},
+            {"ok": True, "duplicate": True, "credits_remaining": 0},
+        ]
+        callback = SimpleNamespace(data="palm:focus:use:work", answer=AsyncMock())
+        update = make_update(callback=callback, update_id=902)
+        context = make_context(store)
+
+        asyncio.run(route_callback(update, context))
+        update.effective_message.reply_text.reset_mock()
+        asyncio.run(route_callback(update, context))
+
+        self.assertEqual(store.redeem_premium_reading.await_count, 2)
+        self.assertEqual(
+            [call.args[1] for call in store.redeem_premium_reading.await_args_list],
+            [902, 902],
+        )
+        self.assertEqual(len(update.effective_message.reply_text.await_args_list), 1)
+        self.assertIn("already processed", update.effective_message.reply_text.await_args.args[0])
 
     def test_daily_reward_calls_server_side_idempotent_rpc(self):
         store = FakeStore()

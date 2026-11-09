@@ -1,3 +1,5 @@
+> **Superseded checklist.** This document describes the earlier English/OpenAI MVP and does not match the current bilingual Fortunis8 handlers. Do not run its original-schema or local-fallback instructions against the existing database. Use [`../DEPLOYMENT.md`](../DEPLOYMENT.md) and [`../VALIDATION.md`](../VALIDATION.md) instead; the new core migration is additive and migration `20261109_001_fortunis8_users.sql` is already applied to the current project.
+
 # Fortunis8 MVP staging smoke test
 
 ## Purpose and safety

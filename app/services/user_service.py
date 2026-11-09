@@ -285,7 +285,16 @@ async def handle_free_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -
 
 def build_application():
     settings.validate()
-    application = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
+    from app.bot.fortunis8_handlers import (
+        register_fortunis8_handlers,
+        shutdown_store,
+    )
+
+    builder = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN)
+    if hasattr(builder, "post_shutdown"):
+        builder = builder.post_shutdown(shutdown_store)
+    application = builder.build()
+    register_fortunis8_handlers(application)
 
     personalization = ConversationHandler(
         entry_points=[CommandHandler("personalize", personalize)],

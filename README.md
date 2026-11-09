@@ -1,6 +1,12 @@
 # Fortunis8
 
-Fortunis8 is a mystical AI-powered fortune application designed around Telegram interactions, reward loops, and personalized reading experiences.
+## Current implementation
+
+The repository now includes a bilingual English/Urdu Telegram MVP alongside its original service modules: entertainment-only fortune and tarot readings, basic and premium text-based palm reflections, a sun-sign horoscope-style flow, Telegram Stars premium-reading entitlement, server-verified skill games, daily rewards, anonymous leaderboard, selectable personas, and optional positive quests. It includes both a Python long-polling app and a Deno/Supabase Edge Function webhook path. See [`DEPLOYMENT.md`](DEPLOYMENT.md), [`docs/edge-function-launch.md`](docs/edge-function-launch.md), and [`VALIDATION.md`](VALIDATION.md) for setup and test boundaries.
+
+The current code does not analyze hand photos, calculate a full astronomical kundli, sell diamonds, issue BNB payouts, or claim that readings predict outcomes. Birth date, time, and location are used transiently and are not saved. Do not run the original `fortunis8_mvp_schema.sql` against the existing project.
+
+Fortunis8 is a Telegram entertainment bot with bilingual readings, skill-based progression, and privacy-conscious persistence.
 
 ## Project goals
 
@@ -17,7 +23,7 @@ This project follows a clean layered architecture:
 - `app/services` contains business logic and integrations.
 - `app/models` defines domain objects.
 - `app/db` communicates with Supabase.
-- `app/api` exposes future API endpoints.
+- `app/api` contains separate health/readiness routes; the Python entrypoint runs Telegram polling, while `supabase/functions/telegram-webhook` is the optional webhook adapter.
 - `app/utils` stores shared helpers and AI prompt templates.
 - `tests` contains validation tests.
 
@@ -48,4 +54,4 @@ Create a `.env` file using `.env.example`.
 
 ## Notes
 
-This is a starter architecture meant to be expanded into a more complete production-ready app.
+The original service modules remain in place for compatibility. The new private-chat feature flows are registered first; see the current deployment and validation guides before enabling a host.

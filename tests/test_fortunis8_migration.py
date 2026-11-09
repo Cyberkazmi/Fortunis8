@@ -3,7 +3,27 @@ import re
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MIGRATION = ROOT / "migrations" / "20261109_002_fortunis8_core.sql"
+MIGRATION_DIR = ROOT / "supabase" / "migrations"
+USERS_MIGRATION = MIGRATION_DIR / "20261109071117_fortunis8_step1_users.sql"
+MIGRATION = MIGRATION_DIR / "20261109073612_fortunis8_core.sql"
+
+
+def test_cli_migration_filenames_match_recorded_supabase_history():
+    recorded = (
+        ("20261109071117", "fortunis8_step1_users"),
+        ("20261109073612", "fortunis8_core"),
+    )
+    assert (ROOT / "supabase" / "config.toml").is_file()
+    assert all((MIGRATION_DIR / f"{version}_{name}.sql").is_file() for version, name in recorded)
+    assert not (ROOT / "migrations").exists()
+
+
+def test_users_migration_matches_step_one_table():
+    sql = USERS_MIGRATION.read_text().lower()
+    assert "create table if not exists public.fortunis8_users" in sql
+    assert "alter table public.fortunis8_users enable row level security" in sql
+    assert "revoke all on table public.fortunis8_users from anon, authenticated" in sql
+    assert "grant select, insert, update on table public.fortunis8_users to service_role" in sql
 
 
 def test_core_migration_creates_only_fortunis8_tables():

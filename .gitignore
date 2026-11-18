@@ -3,3 +3,6 @@ __pycache__/
 .env
 .pytest_cache/
 *.pyc
+supabase/.temp/
+supabase/.branches/
+supabase/functions/.env

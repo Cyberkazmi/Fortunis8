@@ -3,7 +3,7 @@ from app.config import settings
 
 
 def main() -> None:
-    settings.validate()
+    settings.validate_fortunis8()
     application = build_application()
     print("Fortunis8 bot is starting...")
     print(f"Environment: {settings.APP_ENV}")

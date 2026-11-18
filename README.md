@@ -4,6 +4,8 @@
 
 The repository now includes a bilingual English/Urdu Telegram MVP alongside its original service modules: entertainment-only fortune and tarot readings, basic and premium text-based palm reflections, a sun-sign horoscope-style flow, Telegram Stars premium-reading entitlement, server-verified skill games, daily rewards, anonymous leaderboard, selectable personas, and optional positive quests. It includes both a Python long-polling app and a Deno/Supabase Edge Function webhook path. See [`DEPLOYMENT.md`](DEPLOYMENT.md), [`docs/edge-function-launch.md`](docs/edge-function-launch.md), and [`VALIDATION.md`](VALIDATION.md) for setup and test boundaries.
 
+The live database records `20261109082951 / fortunis8_premium_redemption_idempotency`; its matching file is `supabase/migrations/20261109082951_fortunis8_premium_redemption_idempotency.sql`. This migration is already applied. The Edge Function and Telegram webhook have not been deployed or activated.
+
 The current code does not analyze hand photos, calculate a full astronomical kundli, sell diamonds, issue BNB payouts, or claim that readings predict outcomes. Birth date, time, and location are used transiently and are not saved. Do not run the original `fortunis8_mvp_schema.sql` against the existing project.
 
 Fortunis8 is a Telegram entertainment bot with bilingual readings, skill-based progression, and privacy-conscious persistence.

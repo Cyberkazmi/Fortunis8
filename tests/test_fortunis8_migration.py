@@ -6,18 +6,21 @@ ROOT = Path(__file__).resolve().parents[1]
 MIGRATION_DIR = ROOT / "supabase" / "migrations"
 USERS_MIGRATION = MIGRATION_DIR / "20261109071117_fortunis8_step1_users.sql"
 MIGRATION = MIGRATION_DIR / "20261109073612_fortunis8_core.sql"
-IDEMPOTENCY_MIGRATION = MIGRATION_DIR / "20261109081835_fortunis8_premium_redemption_idempotency.sql"
+IDEMPOTENCY_MIGRATION = MIGRATION_DIR / "20261109082951_fortunis8_premium_redemption_idempotency.sql"
 
 
 def test_cli_migration_filenames_match_recorded_supabase_history():
     recorded = (
         ("20261109071117", "fortunis8_step1_users"),
         ("20261109073612", "fortunis8_core"),
+        ("20261109082951", "fortunis8_premium_redemption_idempotency"),
     )
     assert (ROOT / "supabase" / "config.toml").is_file()
     assert all((MIGRATION_DIR / f"{version}_{name}.sql").is_file() for version, name in recorded)
     assert IDEMPOTENCY_MIGRATION.is_file()
-    assert IDEMPOTENCY_MIGRATION.name not in {f"{version}_{name}.sql" for version, name in recorded}
+    assert {path.name for path in MIGRATION_DIR.glob("*.sql")} == {
+        f"{version}_{name}.sql" for version, name in recorded
+    }
     assert not (ROOT / "migrations").exists()
 
 
@@ -68,7 +71,7 @@ def test_core_migration_contains_idempotent_daily_game_and_stars_operations():
     assert "p_currency <> 'xtr'" in sql
 
 
-def test_pending_premium_redemption_migration_is_additive_and_update_keyed():
+def test_applied_premium_redemption_migration_is_additive_and_update_keyed():
     sql = IDEMPOTENCY_MIGRATION.read_text().lower()
     assert "create table if not exists public.fortunis8_premium_redemption_receipts" in sql
     assert "telegram_update_id bigint primary key" in sql

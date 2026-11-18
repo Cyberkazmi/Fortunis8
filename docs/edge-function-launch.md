@@ -2,7 +2,7 @@
 
 ## What this adds
 
-Fortunis8 now has an optional **Supabase Edge Function webhook** at `supabase/functions/telegram-webhook/`. It runs on Deno and does not require a continuously running Python worker or separate worker-host subscription. The Python bot remains the reference package and its full tests remain in place.
+Fortunis8 has an optional **Supabase Edge Function webhook** at `supabase/functions/telegram-webhook/`. It runs on Deno and does not require a continuously running Python worker or separate worker-host subscription. The Python bot remains available and tested.
 
 The adapter covers private-chat onboarding and language choice; fortune, tarot, palm-themed readings, horoscope-style text; Telegram Stars invoices; skill games; daily rewards; profiles and anonymous leaderboard; personas; optional kindness quests; and the last saved reading. Horoscope input is sent in one command (`/horoscope YYYY-MM-DD HH:MM, City`); birth date, time, and city are used for that response only and are not saved. Hand photos are not analyzed.
 
@@ -22,21 +22,21 @@ Supabase injects the project URL and server-only API key into hosted functions. 
 
 The webhook validates the shared header in constant time, accepts only POST, caps request bodies at 256 KB, validates supported Telegram update shapes, uses a server-only key with a bounded database timeout, and returns redacted failures. It does not log incoming message content or credentials. The function has **not** been deployed, and `setWebhook` has **not** been called.
 
-## What must happen before launch
+## What remains before launch
 
 1. Review and merge [PR #4](https://github.com/Cyberkazmi/Fortunis8/pull/4) into `main`. It is currently open and unmerged.
-2. Review the new migration [`20261109081835_fortunis8_premium_redemption_idempotency.sql`](../supabase/migrations/20261109081835_fortunis8_premium_redemption_idempotency.sql). It creates only Fortunis8-owned objects. It has been parsed and statically tested locally, but **has not been applied** to Supabase. Apply it after review and verify it is recorded before deploying the updated Python or Edge code; those versions call the new RPC.
+2. The premium-redemption migration is already applied and recorded as `20261109082951 / fortunis8_premium_redemption_idempotency`. Its matching file is [`20261109082951_fortunis8_premium_redemption_idempotency.sql`](../supabase/migrations/20261109082951_fortunis8_premium_redemption_idempotency.sql). **Do not reapply it.** The SQL body was not changed during version alignment; only the repository filename changed.
 3. Deploy only `telegram-webhook` to project `lnuizsnutjdhaislsxmr` through a controlled Supabase release route. Supabase documents deployment through its CLI or CI/CD; see the [deployment guide](https://supabase.com/docs/guides/functions/deploy). This task deliberately did not deploy it.
-4. Add the active bot token and separate webhook secret to Supabase Edge Function Secrets. Neither value is available in this run.
+4. Add the active bot token and separate webhook secret to Supabase Edge Function Secrets.
 5. Only after deployment and secrets are in place, register Telegram's webhook URL with `setWebhook`, the same `secret_token`, and only the needed update types (`message`, `callback_query`, `pre_checkout_query`). Keep the Python long-polling bot stopped while webhook mode is active; Telegram does not allow polling and a webhook at the same time.
 6. Run private-chat checks for language, readings, horoscope privacy, games, rewards, and callbacks. Test a Stars purchase only after intentionally reviewing and approving the live invoice.
 
 ## Retry behavior and limits
 
-The new migration adds an atomic RPC keyed by Telegram `update_id` and a receipt/result table for premium-reading redemption. A repeat of the same update returns the stored outcome and cannot deduct a second credit. It records no-credit outcomes too, so replaying an old callback cannot later consume a newly purchased credit. The Python and Deno handlers pass the update ID and show a neutral “already processed” response instead of generating or sending a different reading.
+The migration adds an atomic RPC keyed by Telegram `update_id` and a receipt/result table for premium-reading redemption. A repeat of the same update returns the stored outcome and cannot deduct a second credit. It records no-credit outcomes too, so replaying an old callback cannot later consume a newly purchased credit. The Python and Deno handlers pass the update ID and show a neutral “already processed” response instead of generating or sending a different reading.
 
 This is **premium-redemption idempotency**, not a general receipt for every Telegram update. Other repeated deliveries may repeat a free reading/history row, a reply, or an invoice; creating another invoice does not charge the user unless they explicitly complete Telegram's purchase flow. The Star charge ledger, daily rewards, games, and charity claims retain their existing narrower idempotency checks.
 
 ## Database status
 
-The existing project records `20261109071117 / fortunis8_step1_users` and `20261109073612 / fortunis8_core`; both are represented in `supabase/migrations/` under their exact recorded names. Do not rerun them. The new `20261109081835_fortunis8_premium_redemption_idempotency` migration is pending review and is **not applied**. No existing product table is altered by it.
+The project records `20261109071117 / fortunis8_step1_users`, `20261109073612 / fortunis8_core`, and `20261109082951 / fortunis8_premium_redemption_idempotency`. All three migration filenames match their recorded pairs under `supabase/migrations/`. All are already applied; do not rerun them. No migration changes or live deployment were made in this task.
